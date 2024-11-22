@@ -5,8 +5,9 @@ import apiInstance from "../api/apiInstance";
 const initialState = {
     movies: [],
     searchResults: [],
-    movieDetails:null,
+    movieDetails: null,
     users: [],
+    currentUser: null,
     error: null,
     status: ""
 }
@@ -38,19 +39,40 @@ export const searchMovie = createAsyncThunk(
 export const fetchMovieDetails = createAsyncThunk(
     "movie/fetchMovieDetails",
     async (id, { rejectWithValue }) => {
-      try {
-        const res = await apiInstance.get(`/movie/${id}`);
-        return res.data;
-      } catch (error) {
-        return rejectWithValue(error.message);
-      }
+        try {
+            const res = await apiInstance.get(`/movie/${id}`);
+            return res.data;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
     }
-  );
+);
 
 export const movieSlice = createSlice({
     name: "movie",
     initialState,
-    reducers: {},
+    reducers: {
+        signup: (state, action) => {
+            state.users.push(action.payload); // Store user details after signup
+        },
+        login: (state, action) => {
+            const foundUser = state.users.find(
+                (user) => user.email === action.payload.email && user.password === action.payload.password
+            );
+
+            if (foundUser) {
+                // User found, set the currentUser to the found user
+                state.currentUser = foundUser;
+                state.error = null; // Clear any existing error
+            } else {
+                // No user found, set an error message
+                state.currentUser = {error : "Invalid user"}; // Set error message
+            }
+        },
+        logout: (state) => {
+            state.currentUser = null; // Clear the current user on logout
+        },
+    },
     extraReducers: (builder) => {
         // fetch
         builder.addCase(fetchMovie.pending, (state, action) => {
@@ -94,4 +116,5 @@ export const movieSlice = createSlice({
     }
 })
 
+export const { signup, login, logout } = movieSlice.actions;
 export default movieSlice.reducer

@@ -6,6 +6,8 @@ import MovieList from './components/MovieList'
 import MovieSearch from './components/MovieSearch'
 import { Navbar } from 'react-bootstrap'
 import NavBar from './components/Navbar'
+import Auth from './components/Auth'
+import Profile from './components/Profile'
 
 function App() {
 
@@ -13,8 +15,10 @@ function App() {
     <>
       <NavBar />
       <Routes>
-        <Route path={"/"} element={<MovieList />} />
+        <Route path={"/"} element={<Auth />} />
+        <Route path={"/home"} element={<MovieList />} />
         <Route path={"/movieDetails/:id"} element={<MovieDetails />} />
+        <Route path={"/profile"} element={<Profile />} />
         <Route path={"/movieSearch"} element={<MovieSearch />} />
       </Routes>
     </>
